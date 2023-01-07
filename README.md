@@ -32,18 +32,18 @@
 #### Response
  Status code 200, 400
 
- | Parameter  | Type | Description            |
-|------------|------|------------------------|
-| **Bearer** | str  | Users token to sign in |
+ | Parameter  | Type | Description             |
+|------------|------|-------------------------|
+| **Bearer** | str  |  Users token to sign in |
 
 
 ### Logout
 #### Request
 > <span style="color:orange;"><strong>[POST]</strong></span> /api/user/logout/
 
- | Header parameter | Type | Description            |
-|------------------|------|------------------------|
-| **Bearer**       | str  | Users token to sign in |
+ | Header parameter | Type | Description                          |
+|------------------|------|--------------------------------------|
+| **Bearer**       | str  | **Required.** Users token to sign in |
 #### Response
  Status code 200, 401
 
@@ -52,15 +52,15 @@
 #### Request
 > <span style="color:orange;"><strong>[POST]</strong></span> /api/portfolio/transaction/
 
- | Header parameter | Type | Description            |
-|------------------|------|------------------------|
-| **Bearer**       | str  | Users token to sign in |
+ | Header parameter | Type | Description                          |
+|------------------|------|--------------------------------------|
+| **Bearer**       | str  | **Required.** Users token to sign in |
 
-| Body parameter       | Type  | Description                                   |
-|----------------------|-------|-----------------------------------------------|
-| **cryptocurrency**   | str   | Cryptocurrency that you wish to buy/sell      |
-| **amount**           | float | Amount you want to buy/sell                   |
-| **transaction_type** | str   | Transaction type that must be "buy" or "sell" |
+| Body parameter       | Type  | Description                                                 |
+|----------------------|-------|-------------------------------------------------------------|
+| **cryptocurrency**   | str   | **Required.** Cryptocurrency that you wish to buy/sell      |
+| **amount**           | float | **Required.** Amount you want to buy/sell                   |
+| **transaction_type** | str   | **Required.** Transaction type that must be "buy" or "sell" |
 
 #### Response
 Status code 200, 400, 401
@@ -69,9 +69,9 @@ Status code 200, 400, 401
 #### Request
 > <span style="color:green;"><strong>[GET]</strong></span> /api/portfolio/possession
 
- | Header parameter | Type | Description            |
-|------------------|------|------------------------|
-| **Bearer**       | str  | Users token to sign in |
+ | Header parameter | Type | Description                          |
+|------------------|------|--------------------------------------|
+| **Bearer**       | str  | **Required.** Users token to sign in |
 
 #### Response
 | Parameter                   | Type  | Description                                        |
