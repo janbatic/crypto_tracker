@@ -9,12 +9,11 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -23,10 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ue(dwv25wx_88ym39sm@v2356!+0lf+#t&810d9%-%c0w11q1e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,6 +35,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'cryptotracker',
     'core'
@@ -72,8 +73,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'main_app.wsgi.application'
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'core.authentication.BearerAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
 
+    ]
+}
+
+WSGI_APPLICATION = 'main_app.wsgi.application'
 
 # Postgres
 DATABASES = {
@@ -105,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -117,7 +126,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -127,3 +135,84 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+COLORED_LOG_FORMATTER = {
+    'format': "%(log_color)s%(asctime)s %(levelname)s %(name)s[%(module)s:%(lineno)s %(funcName)s] %(message)s",
+    'datefmt': "%H:%M:%S %y-%m-%d",
+    'log_colors': {
+        'DEBUG': 'blue',
+        'INFO': 'white',
+        'WARNING': 'yellow',
+        'ERROR': 'red',
+        'CRITICAL': 'bold_red',
+    },
+}
+BASE_LOG_DIR = os.path.join(BASE_DIR, 'logs')
+
+MAX_LOGGING_BYTES = 100000000  # 100 Mb
+
+
+def file_logger_dict(file_name=None, backup_count=1):
+    return {
+        'level': 'INFO',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'filename': os.path.join(BASE_LOG_DIR, f"{file_name}.log"),
+        'formatter': 'colored',
+        'backupCount': backup_count,
+        'maxBytes': MAX_LOGGING_BYTES,
+    }
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s [%(process)d] [%(levelname)s] line=%(lineno)s function=%(funcName)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        'colored': {
+            '()': 'colorlog.ColoredFormatter',
+            **COLORED_LOG_FORMATTER
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'colored'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_LOG_DIR, 'log.log'),
+            'maxBytes': MAX_LOGGING_BYTES,
+            'backupCount': 2,
+            'formatter': 'colored',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_LOG_DIR, 'error.log'),
+            'maxBytes': MAX_LOGGING_BYTES,
+            'backupCount': 2,
+            'formatter': 'colored',
+        },
+        'celery': file_logger_dict('api'),
+    },
+    'loggers': {
+        'api': {
+            'handlers': ['console', 'file', 'error_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'commands': {
+            'handlers': ['console', 'file', 'error_file'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    }
+}
