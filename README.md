@@ -74,21 +74,11 @@ Status code 200, 400, 401
 | **Bearer**       | str  | Users token to sign in |
 
 #### Response
+| Parameter                   | Type  | Description                                        |
+|-----------------------------|-------|----------------------------------------------------|
+| **cryptocurrencies**        | list  | List of all crypto and their amounts in possession |
+| **current_portfolio_value** | float | Current value of users portfolio                   |
 
-```json
-{
-    "cryptocurrencies": [
-        {
-            "cryptocurrency": "BTC",
-            "amount": 800.0
-        }, 
-        {
-            "cryptocurrency": "ETH",
-            "amount": 200.0
-        }
-    ]
-}
-```
 
 ### Crypto-info
 #### Request
